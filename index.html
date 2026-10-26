@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Popタイピング セーブデータエディタ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0');
+:root{
+  --bg:#f5f5f7; --bg-grad:radial-gradient(1200px 600px at 50% -10%, #e8eef7 0%, rgba(232,238,247,0) 60%);
+  --card:rgba(255,255,255,.78); --card-solid:#fbfbfd;
+  --text:#1d1d1f; --text2:#6e6e73; --hair:rgba(0,0,0,.08);
+  --accent:#0071e3; --accent-h:#0077ed; --ring:rgba(0,113,227,.22);
+  --switch-on:#34c759; --field:#ffffff;
+  --shadow:0 4px 24px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --nav:rgba(251,251,253,.8);
+}
+html[data-theme="dark"]{
+  --bg:#000000; --bg-grad:radial-gradient(1200px 600px at 50% -10%, #10151d 0%, rgba(16,21,29,0) 60%);
+  --card:rgba(28,28,30,.72); --card-solid:#1c1c1e;
+  --text:#f5f5f7; --text2:#a1a1a6; --hair:rgba(255,255,255,.14);
+  --accent:#0a84ff; --accent-h:#409cff; --ring:rgba(10,132,255,.35);
+  --switch-on:#30d158; --field:#1c1c1e;
+  --shadow:0 4px 24px rgba(0,0,0,.5),0 1px 2px rgba(0,0,0,.4);
+  --nav:rgba(22,22,24,.72);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:"LINE Seed JP","Noto Sans JP",sans-serif;
+  background:var(--bg); background-image:var(--bg-grad); background-attachment:fixed;
+  color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.5;
+  transition:background-color .4s ease,color .4s ease;
+}
+nav{
+  position:sticky;top:0;z-index:50;
+  background:var(--nav);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--hair);
+}
+.nav-in{max-width:760px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:-.01em}
+.brand .dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(145deg,#ffd77a,#ffb347 55%,#e8930c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06);position:relative;flex:none}
+.brand .dot::after{content:"";position:absolute;inset:6px;border-radius:50%;background:rgba(255,255,255,.55)}
+.theme-btn{
+  border:1px solid var(--hair);background:var(--card-solid);color:var(--text);
+  width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:15px;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:transform .15s ease, box-shadow .2s ease;
+}
+.material-symbols-outlined{font-family:"Material Symbols Outlined";font-size:20px;font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;font-feature-settings:"liga";-webkit-font-feature-settings:"liga";-webkit-font-smoothing:antialiased}
+.theme-btn:hover{transform:scale(1.06);box-shadow:var(--shadow)}
+main{max-width:760px;margin:0 auto;padding:36px 22px 80px}
+.hero{padding:18px 4px 30px}
+.hero h1{font-size:34px;font-weight:700;letter-spacing:-.022em}
+.hero p{color:var(--text2);font-size:15px;margin-top:8px;max-width:56ch}
+.card{
+  background:var(--card);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  border:1px solid var(--hair);border-radius:20px;box-shadow:var(--shadow);
+  padding:26px 26px 24px;margin-bottom:22px;
+  transition:background-color .4s ease;
+}
+.card h2{font-size:20px;font-weight:700;letter-spacing:-.015em}
+.card .sub{color:var(--text2);font-size:13px;margin-top:4px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:18px}
+label.f{display:block}
+label.f .t{font-size:12.5px;font-weight:700;color:var(--text2);margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline}
+label.f .t .u{font-weight:400;font-size:11px}
+input[type=text].num{
+  width:100%;padding:12px 14px;font-size:17px;color:var(--text);
+  background:var(--field);border:1px solid var(--hair);border-radius:12px;outline:none;
+  font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  transition:border-color .2s,box-shadow .2s,background-color .4s;
+}
+input[type=text].num:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--ring)}
+.titles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:18px}
+.title{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:var(--field);border:1px solid var(--hair);border-radius:14px;cursor:pointer;
+  transition:border-color .2s,box-shadow .2s;
+}
+.title:hover{box-shadow:var(--shadow)}
+.title input{position:absolute;opacity:0;pointer-events:none}
+.sw{
+  flex:none;width:42px;height:25px;border-radius:99px;background:rgba(120,120,128,.32);
+  position:relative;transition:background .25s ease;
+}
+.sw::after{
+  content:"";position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .25s ease;
+}
+.title input:checked + .sw{background:var(--switch-on)}
+.title input:checked + .sw::after{transform:translateX(17px)}
+.title input:focus-visible + .sw{box-shadow:0 0 0 4px var(--ring)}
+.title .nm{font-size:13.5px;font-weight:700;line-height:1.3}
+.title .id{display:block;font-size:10.5px;color:var(--text2);font-weight:400;margin-top:1px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.btn{
+  appearance:none;border:none;cursor:pointer;font-family:inherit;
+  background:var(--accent);color:#fff;font-size:15px;font-weight:700;
+  padding:12px 22px;border-radius:980px;letter-spacing:-.01em;
+  transition:background .2s,transform .12s;
+}
+.btn:hover{background:var(--accent-h)}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--hair)}
+.btn.ghost:hover{background:var(--field)}
+.status{font-size:13px;margin-top:12px;min-height:1.4em}
+.status.ok{color:var(--switch-on)}
+.status.err{color:#ff453a}
+.preview{
+  margin-top:16px;background:var(--field);border:1px solid var(--hair);border-radius:12px;
+  padding:12px 14px;font:11.5px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color:var(--text2);word-break:break-all;overflow-wrap:anywhere;
+}
+.preview b{color:var(--text);font-weight:700}
+.dl-area{display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0 2px}
+.dl-area .btn{font-size:17px;padding:15px 44px}
+.fname{font-size:12.5px;color:var(--text2);font-variant-numeric:tabular-nums}
+details{margin-top:14px}
+details summary{cursor:pointer;font-size:13px;color:var(--accent);font-weight:700;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details .body{font-size:12.5px;color:var(--text2);margin-top:10px;line-height:1.8}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;background:var(--field);border:1px solid var(--hair);border-radius:5px;padding:1px 5px}
+footer{max-width:760px;margin:0 auto;padding:0 22px 60px;color:var(--text2);font-size:12px;line-height:1.9}
+@media (max-width:560px){.hero h1{font-size:26px}.card{padding:20px 18px}}
+</style>
+</head>
+<body>
+<nav><div class="nav-in">
+  <div class="brand"><span class="dot"></span>Popタイピング セーブデータエディタ</div>
+  <button class="theme-btn" id="themeBtn" type="button" aria-label="ダークモードに切り替え"><span class="material-symbols-outlined">dark_mode</span></button>
+</div></nav>
+
+<main>
+  <section class="card">
+    <h2>記録</h2>
+    <p class="sub">0〜2,147,483,647 の整数。入力した値がそのまま記録になります。</p>
+    <div class="grid3">
+      <label class="f"><span class="t">総ポップコーン数<span class="u">粒</span></span>
+        <input class="num" id="total" type="text" inputmode="numeric" autocomplete="off" value="0"></label>
+      <label class="f"><span class="t">ハイスコア<span class="u">粒</span></span>
+        <input class="num" id="hs" type="text" inputmode="numeric" autocomplete="off" value="0"></label>
+      <label class="f"><span class="t">最高召喚レベル<span class="u">Lv.</span></span>
+        <input class="num" id="lvl" type="text" inputmode="numeric" autocomplete="off" value="0"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>称号</h2>
+    <p class="sub">解放する称号をオンにしてください。チェックの順序はファイル内では称号ID順（1〜23）で並びます。</p>
+    <div class="row">
+      <button class="btn ghost" type="button" id="allOn">すべて解放</button>
+      <button class="btn ghost" type="button" id="allOff">すべて解除</button>
+    </div>
+    <div class="titles" id="titles"></div>
+  </section>
+
+  <section class="card">
+    <h2>ダウンロード</h2>
+    <p class="sub">ファイル名は保存日時（ローカル時刻）から自動で付きます。</p>
+    <div class="preview" id="preview"></div>
+    <div class="dl-area">
+      <button class="btn" type="button" id="dl">バックアップファイルを作成してダウンロード</button>
+      <div class="fname" id="fname"></div>
+      <div class="status" id="dlStatus"></div>
+    </div>
+    <details>
+      <summary>生成される形式の詳細</summary>
+      <div class="body">
+        平文 <code>ハイスコア:総数:レベル:,称号1,称号2,…,称号23:</code> を2種の固定鍵（<code>popxxxkeyx0net000neutral</code> / <code>blackbox123void59nullpo0</code>）でそれぞれ繰り返しXORし、各々Base64化。それを <code>A:B</code> で連結して全体を再度Base64化します。ゲームは復元時に2つの復号結果が一致するかで検査するため、2組は必ず同じ平文から生成しています。称号フラグの並び順はID順（全解放データからは順序を検証できないため推定）。ゲーム内での読み込み動作は未検証です。復元すると現在のセーブデータは上書きされます。上限値は int32 の最大値で、それ以上の値は未検証です。
+      </div>
+    </details>
+  </section>
+</main>
+
+<footer>
+  Popタイピング: <a href="https://keyx0.net/pop/" target="_blank" rel="noopener">https://keyx0.net/pop/</a> 本ツールはNeutralとは一切関係ありません。&copy;2026 mashu.<br>
+</footer>
+
+<script>
+// ---CORE-START---
+const KEY_A = "popxxxkeyx0net000neutral";
+const KEY_B = "blackbox123void59nullpo0";
+const TITLES = [
+  "トウモロコシを滅する者","極・スーパーポップコーンマスター","真・スーパーポップコーンマスター",
+  "スーパーポップコーンマスター","伝説のポップコーンマスター","獄炎のポップコーンマスター",
+  "紫電のポップコーンマスター","爆轟のポップコーンマスター","閃光のポップコーンマスター",
+  "灼熱のポップコーンマスター","奇跡のポップコーンマスター","疾風のポップコーンマスター",
+  "烈火のポップコーンマスター","純白のポップコーンマスター","ポップコーンマスター",
+  "特級ポップコーン使い","上級ポップコーン使い","中級ポップコーン使い",
+  "初級ポップコーン使い","ラッキー☆ルーキー","見習いポップコーン使い",
+  "新人ポップコーン使い","はじめの一粒"
+];
+const TITLE_REQUIREMENTS = [
+  "50,000粒以上","40,000～49,999粒","32,000～39,999粒","25,000～31,999粒",
+  "20,000～24,999粒","16,000～19,999粒","13,000～15,999粒","11,000～12,999粒",
+  "9,000～10,999粒","8,000～8,999粒","7,777粒","7,000～7,999粒",
+  "6,000～6,999粒","5,000～5,999粒","4,000～4,999粒","3,000～3,999粒",
+  "2,000～2,999粒","1,500～1,999粒","1,000～1,499粒","777粒",
+  "500～999粒","2～499粒","1粒"
+];
+const INT_MAX = 2147483647;
+
+function xorRepeat(text, key){
+  let out = "";
+  for (let i = 0; i < text.length; i++){
+    out += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  }
+  return out;
+}
+function bytesToB64(bytes){
+  let s = "";
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  return btoa(s);
+}
+function encodeBackup(plain){
+  const a = btoa(xorRepeat(plain, KEY_A));
+  const b = btoa(xorRepeat(plain, KEY_B));
+  return btoa(a + ":" + b);
+}
+function buildPlaintext(hs, total, lvl, flags){
+  return hs + ":" + total + ":" + lvl + ":," + flags.join(",") + ":";
+}
+// ---CORE-END---
+
+let themeOverride = null;      // URLパラメータ theme=light|dark
+try {
+  const q = new URLSearchParams(location.search).get("theme");
+  if (q === "light" || q === "dark") themeOverride = q;
+} catch(e){}
+
+function applyTheme(){
+  const sys = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  const theme = themeOverride || sys;
+  document.documentElement.dataset.theme = theme;
+  const themeBtn = document.getElementById("themeBtn");
+  themeBtn.setAttribute("aria-label", theme === "dark" ? "ライトモードに切り替え" : "ダークモードに切り替え");
+  themeBtn.querySelector(".material-symbols-outlined").textContent = theme === "dark" ? "light_mode" : "dark_mode";
+}
+document.getElementById("themeBtn").addEventListener("click", () => {
+  const cur = document.documentElement.dataset.theme;
+  themeOverride = cur === "dark" ? "light" : "dark";
+  applyTheme();
+});
+if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (!themeOverride) applyTheme(); });
+applyTheme();
+
+const titlesEl = document.getElementById("titles");
+TITLES.forEach((name, i) => {
+  const l = document.createElement("label");
+  l.className = "title";
+  l.innerHTML = `<input type="checkbox" data-flag="${i}" checked><span class="sw"></span>` +
+                `<span><span class="nm">${name}</span><span class="id">ID ${String(i+1).padStart(2,"0")} ・ ${TITLE_REQUIREMENTS[i]}</span></span>`;
+  titlesEl.appendChild(l);
+});
+const flagBoxes = [...document.querySelectorAll("input[data-flag]")];
+document.getElementById("allOn").onclick  = () => flagBoxes.forEach(b => b.checked = true);
+document.getElementById("allOff").onclick = () => flagBoxes.forEach(b => b.checked = false);
+
+function digitsOnly(el, max){
+  el.addEventListener("input", () => {
+    el.value = el.value.replace(/[^0-9]/g, "").replace(/^0+(?=\d)/, "").slice(0, 10);
+    updatePreview();
+  });
+  el.addEventListener("blur", () => {
+    let v = parseInt(el.value || "0", 10);
+    if (!isFinite(v) || v < 0) v = 0;
+    if (v > max) v = max;
+    el.value = String(v);
+    updatePreview();
+  });
+}
+const hsEl = document.getElementById("hs"), totalEl = document.getElementById("total"), lvlEl = document.getElementById("lvl");
+[hsEl, totalEl, lvlEl].forEach(el => digitsOnly(el, INT_MAX));
+
+function currentValues(){
+  const clamp = s => { let v = parseInt(s || "0", 10); if (!isFinite(v) || v < 0) v = 0; if (v > INT_MAX) v = INT_MAX; return v; };
+  return { hs: clamp(hsEl.value), total: clamp(totalEl.value), lvl: clamp(lvlEl.value) };
+}
+function currentFlags(){
+  return flagBoxes.map(b => b.checked ? "1" : "0");
+}
+function updatePreview(){
+  const v = currentValues();
+  const p = buildPlaintext(v.hs, v.total, v.lvl, currentFlags());
+  const fmt = n => Number(n).toLocaleString("ja-JP");
+  document.getElementById("preview").innerHTML =
+    `平文: <b>${p}</b><br>ハイスコア <b>${fmt(v.hs)}</b> 粒 ／ 総数 <b>${fmt(v.total)}</b> 粒 ／ レベル <b>Lv.${fmt(v.lvl)}</b> ／ 解放称号 <b>${flagBoxes.filter(b=>b.checked).length}/${TITLES.length}</b>`;
+}
+["input","change"].forEach(ev => titlesEl.addEventListener(ev, updatePreview));
+updatePreview();
+
+function stamp(){
+  const d = new Date(), p = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}_${p(d.getMonth()+1)}_${p(d.getDate())}_${p(d.getHours())}_${p(d.getMinutes())}_${p(d.getSeconds())}`;
+}
+document.getElementById("dl").addEventListener("click", () => {
+  const v = currentValues();
+  const plain = buildPlaintext(v.hs, v.total, v.lvl, currentFlags());
+  const enc = encodeBackup(plain);
+  const name = `pop_backup_${stamp()}.dat`;
+  const blob = new Blob([enc], { type: "application/octet-stream" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  const st = document.getElementById("dlStatus");
+  st.textContent = `${name}（${enc.length}バイト）を保存しました。`;
+  st.className = "status ok";
+});
+const fnameEl = document.getElementById("fname");
+function showFname(){ fnameEl.textContent = `保存名: pop_backup_${stamp()}.dat`; }
+setInterval(showFname, 1000); showFname();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
